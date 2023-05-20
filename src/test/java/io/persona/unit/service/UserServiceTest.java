@@ -63,6 +63,7 @@ class UserServiceTest {
 
     @Nested
     @Tag("login")
+    @DisplayName("Test User login functionality")
     class LoginTest {
         //
 
