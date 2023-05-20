@@ -2,12 +2,17 @@ package io.persona.unit.service;
 
 
 import io.persona.User;
+import io.persona.UserDao;
 import io.persona.UserService;
-import io.persona.unit.paramresolver.UserServiceParamResolver;
+import io.persona.unit.TestBase;
+import io.persona.unit.extension.PostProcessingExtension;
+import io.persona.unit.extension.UserServiceParamResolver;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.*;
+import org.mockito.Mockito;
+
 
 import java.time.Duration;
 import java.util.Optional;
@@ -20,13 +25,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.Random.class)
 @ExtendWith({
-        UserServiceParamResolver.class
+        UserServiceParamResolver.class,
+        PostProcessingExtension.class
 })
-class UserServiceTest {
+public class UserServiceTest extends TestBase {
     //
     private static final User IVAN = new User(1, "Ivan", "123");
     private static final User PETR = new User(2, "Petr", "321");
     private UserService userService;
+    private UserDao userDao;
 
     public UserServiceTest(TestInfo testInfo) {
         //
@@ -40,12 +47,20 @@ class UserServiceTest {
     }
 
     @BeforeEach
-    void prepare(UserService userService) {
+    void prepare() {
         //
         System.out.println("Before each: " + this);
-        this.userService = userService;
+        this.userDao = Mockito.mock(UserDao.class);
+        this.userService = new UserService(userDao);
     }
 
+    @Test
+    void shouldDeleteExistedUser() {
+        userService.add(IVAN);
+        Mockito.doReturn(true).when(userDao).delete(IVAN.getId());
+        var deleted = userService.delete(IVAN.getId());
+        assertTrue(deleted);
+    }
 
     @Test
     @Order(1)

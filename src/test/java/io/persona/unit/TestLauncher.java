@@ -1,6 +1,7 @@
-package io.persona.unit.service;
+package io.persona.unit;
 
-import org.junit.jupiter.engine.discovery.DiscoverySelectorResolver;
+
+import io.persona.unit.service.UserServiceTest;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;

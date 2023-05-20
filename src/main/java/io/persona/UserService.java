@@ -7,6 +7,17 @@ import java.util.Optional;
 public class UserService {
     //
     List<User> users = new ArrayList<>();
+    private final UserDao userDao;
+
+    public UserService(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
+    public boolean delete(Integer id) {
+        //
+        return userDao.delete(id);
+    }
+
     public List<User> getAll() {
         //
         return users;
