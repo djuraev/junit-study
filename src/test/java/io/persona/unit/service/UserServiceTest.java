@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.*;
 
+import java.time.Duration;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -89,9 +90,11 @@ class UserServiceTest {
             assertTrue(maybeUser.isEmpty());
         }
 
-        @Test
-        void loginFailIfUserDoesNotExist() {
+        //@Test
+        @RepeatedTest(value = 5, name = RepeatedTest.DISPLAY_NAME_PLACEHOLDER)
+        void loginFailIfUserDoesNotExist(RepetitionInfo repetitionInfo) {
             //
+            System.out.println(repetitionInfo);
             userService.add(IVAN);
             var maybeUser = userService.login("dummy", IVAN.getPassword());
             assertTrue(maybeUser.isEmpty());
@@ -105,6 +108,11 @@ class UserServiceTest {
 
             assertTrue(user.isPresent());
             user.ifPresent(user1 -> assertTrue(user1.equals(IVAN)));
+        }
+
+        @Test
+        void checkLoginFunctionalityPerformance() {
+            assertTimeout(Duration.ofMillis(200L), () ->userService.login("dummy", "123"));
         }
 
         @Test
