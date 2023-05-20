@@ -50,7 +50,7 @@ public class UserServiceTest extends TestBase {
     void prepare() {
         //
         System.out.println("Before each: " + this);
-        this.userDao = Mockito.mock(UserDao.class);
+        this.userDao = Mockito.spy(new UserDao());
         this.userService = new UserService(userDao);
     }
 
@@ -58,7 +58,16 @@ public class UserServiceTest extends TestBase {
     void shouldDeleteExistedUser() {
         userService.add(IVAN);
         Mockito.doReturn(true).when(userDao).delete(IVAN.getId());
+        /*Mockito.when(userDao.delete(IVAN.getId()))
+                .thenReturn(true)
+                .thenReturn(false);*/
+
         var deleted = userService.delete(IVAN.getId());
+        System.out.println(userService.delete(IVAN.getId()));
+        System.out.println(userService.delete(IVAN.getId()));
+
+        Mockito.verify(userDao, Mockito.times(2)).delete(IVAN.getId());
+        
         assertTrue(deleted);
     }
 
