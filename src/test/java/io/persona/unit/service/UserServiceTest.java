@@ -3,7 +3,9 @@ package io.persona.unit.service;
 
 import io.persona.User;
 import io.persona.UserService;
+import io.persona.unit.paramresolver.UserServiceParamResolver;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Optional;
 
@@ -13,11 +15,19 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("user")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.Random.class)
+@ExtendWith({
+        UserServiceParamResolver.class
+})
 class UserServiceTest {
     //
     private static final User IVAN = new User(1, "Ivan", "123");
     private static final User PETR = new User(2, "Petr", "321");
     private UserService userService;
+
+    public UserServiceTest(TestInfo testInfo) {
+        //
+        System.out.println(testInfo);
+    }
 
     @BeforeAll
     void startTesting() {
@@ -26,10 +36,10 @@ class UserServiceTest {
     }
 
     @BeforeEach
-    void prepare() {
+    void prepare(UserService userService) {
         //
         System.out.println("Before each: " + this);
-        userService = new UserService();
+        this.userService = userService;
     }
 
 
