@@ -6,8 +6,11 @@ import io.persona.UserService;
 import io.persona.unit.paramresolver.UserServiceParamResolver;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.*;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -113,5 +116,34 @@ class UserServiceTest {
                     () -> assertThrows(IllegalArgumentException.class, () -> userService.login(null, null))
             );
         }
+
+        @ParameterizedTest
+        //@NullSource
+        //@EmptySource
+        /*@ValueSource(strings = {
+                "Ivan", "Petr"
+        })*/
+        //@EnumSource
+        //@MethodSource("io.persona.unit.service.UserServiceTest#getArgumentsForLogin")
+        @CsvFileSource(resources = "/login-test-data.csv", numLinesToSkip = 1)
+        @CsvSource({
+                "Ivan,123",
+                "Petr,321"
+        })
+        void loginParameterizedTest(String username, String password) {
+            //
+            userService.add(IVAN, PETR);
+            var found = userService.login(username, password);
+            assertTrue(!found.equals(null));
+        }
+    }
+
+    static Stream<Arguments> getArgumentsForLogin() {;
+        return Stream.of(
+                Arguments.of("Ivan", "123", Optional.of(IVAN)),
+                Arguments.of("Petr", "321", Optional.of(PETR)),
+                Arguments.of("Ivan", "dummy", Optional.empty()),
+                Arguments.of("dummy", "123", Optional.empty())
+        );
     }
 }

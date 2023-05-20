@@ -12,9 +12,9 @@ public class UserService {
         return users;
     }
 
-    public boolean add(User user) {
+    public boolean add(User... user) {
         //
-        return users.add(user);
+        return users.addAll(List.of(user));
     }
 
     public Optional<User> login(String username, String password) {
